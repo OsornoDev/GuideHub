@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación - Django</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="auth-container">
+            <div class="row g-0">
+                <div class="col-md-5 d-none d-md-block">
+                    <div class="auth-left">
+                        <div class="auth-left-content">
+                            <h1 class="display-5 fw-bold">Bienvenido</h1>
+                            <p class="lead">Únete a nuestra plataforma y descubre todas las funcionalidades que tenemos para ofrecerte.</p>
+                            <ul class="mt-4">
+                                <li class="mb-2">Acceso a contenido exclusivo</li>
+                                <li class="mb-2">Personalización de tu experiencia</li>
+                                <li>Comunidad activa de usuarios</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="auth-right">
+                        <div class="auth-tabs">
+                            <div class="auth-tab active" id="login-tab">Iniciar Sesión</div>
+                            <div class="auth-tab" id="register-tab">Registrarse</div>
+                        </div>
+                        
+                        <!-- Formulario de Login -->
+                        <div class="form-container" id="login-form">
+                            <h3 class="mb-4">Inicia sesión en tu cuenta</h3>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="login-email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="login-email" placeholder="tu@email.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="login-password" class="form-label">Contraseña</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="login-password" placeholder="Tu contraseña">
+                                        <span class="toggle-password" id="toggle-login-password">
+                                            <i class="bi bi-eye"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="remember-me">
+                                    <label class="form-check-label" for="remember-me">Recordar sesión</label>
+                                    <a href="#" class="float-end">¿Olvidaste tu contraseña?</a>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 py-2 mb-3">Iniciar Sesión</button>
+                            </form>
+                            <p class="text-center mt-4">
+                                ¿No tienes una cuenta? <a href="#" class="text-primary" id="switch-to-register">Regístrate</a>
+                            </p>
+                        </div>
+                        <div class="form-container d-none" id="register-form">
+                            <h3 class="mb-4">Crea una cuenta nueva</h3>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="register-name" class="form-label">Nombre completo</label>
+                                    <input type="text" class="form-control" id="register-name" placeholder="Tu nombre">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="register-email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="register-email" placeholder="tu@email.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="register-password" class="form-label">Contraseña</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="register-password" placeholder="Crea una contraseña segura">
+                                        <span class="toggle-password" id="toggle-register-password">
+                                            <i class="bi bi-eye"></i>
+                                        </span>
+                                    </div>
+                                    <div class="password-strength mt-2">
+                                        <div class="password-strength-bar" id="password-strength-bar"></div>
+                                    </div>
+                                    
+                                    <div class="password-rules mt-3">
+                                        <p class="small mb-2">Tu contraseña debe cumplir con:</p>
+                                        <div class="password-rule">
+                                            <span class="rule-icon rule-invalid" id="length-icon"><i class="bi bi-x-circle"></i></span>
+                                            <span class="rule-invalid" id="length-text">Al menos 8 caracteres</span>
+                                        </div>
+                                        <div class="password-rule">
+                                            <span class="rule-icon rule-invalid" id="uppercase-icon"><i class="bi bi-x-circle"></i></span>
+                                            <span class="rule-invalid" id="uppercase-text">Al menos una letra mayúscula</span>
+                                        </div>
+                                        <div class="password-rule">
+                                            <span class="rule-icon rule-invalid" id="lowercase-icon"><i class="bi bi-x-circle"></i></span>
+                                            <span class="rule-invalid" id="lowercase-text">Al menos una letra minúscula</span>
+                                        </div>
+                                        <div class="password-rule">
+                                            <span class="rule-icon rule-invalid" id="special-icon"><i class="bi bi-x-circle"></i></span>
+                                            <span class="rule-invalid" id="special-text">Al menos un carácter especial</span>
+                                        </div>
+                                        <div class="password-rule">
+                                            <span class="rule-icon rule-invalid" id="consecutive-icon"><i class="bi bi-x-circle"></i></span>
+                                            <span class="rule-invalid" id="consecutive-text">Sin números consecutivos</span>
+                                        </div>
+                                        <div class="password-rule">
+                                            <span class="rule-icon rule-invalid" id="letters-icon"><i class="bi bi-x-circle"></i></span>
+                                            <span class="rule-invalid" id="letters-text">Sin letras consecutivas</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="register-password-confirm" class="form-label">Confirmar Contraseña</label>
+                                    <input type="password" class="form-control" id="register-password-confirm" placeholder="Confirma tu contraseña">
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="terms">
+                                    <label class="form-check-label" for="terms">Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a></label>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 py-2 mb-3">Registrarse</button>
+                            </form>
+                            
+                            <p class="text-center mt-4">
+                                ¿Ya tienes una cuenta? <a href="#" class="text-primary" id="switch-to-login">Inicia Sesión</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/auth.js' %}"></script>
+</body>
+</html>

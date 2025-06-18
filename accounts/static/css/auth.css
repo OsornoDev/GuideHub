@@ -1,0 +1,134 @@
+body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+        }
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .auth-left {
+            background: url('/static/img/ChatGPT\ Image\ 13\ jun\ 2025\,\ 05_56_45\ p.m..png') center/cover;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+            color: white;
+            position: relative;
+        }
+        .auth-left::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+        }
+        .auth-left-content {
+            position: relative;
+            z-index: 1;
+        }
+        .auth-right {
+            padding: 40px;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .auth-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            text-align: center;
+            flex: 1;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .auth-tab.active {
+            border-bottom: 3px solid #0d6efd;
+            color: #0d6efd;
+        }
+        .password-strength {
+            height: 5px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .password-rules {
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+        .password-rule {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .rule-valid {
+            color: #198754;
+        }
+        .rule-invalid {
+            color: #dc3545;
+        }
+        .rule-icon {
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+        .social-login .btn {
+            width: 100%;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .social-login .btn i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: #6c757d;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+        .divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+        .input-group {
+            position: relative;
+        }
