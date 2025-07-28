@@ -18,10 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+import core.views as v_core
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('accounts.urls')),
+    path('accounts/', include('accounts.urls')),
+    path('', v_core.home, name='home'),
+    path('privacidad/', v_core.privacy_policy, name='privacidad'),
+    path('juegos/', include('game.urls'))
 ]
 
 if settings.DEBUG:

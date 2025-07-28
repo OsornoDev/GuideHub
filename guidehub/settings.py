@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'guide',
     'accounts',
-    'game'
+    'game',
+    'core',
+    'users',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -79,10 +84,18 @@ WSGI_APPLICATION = 'guidehub.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': config("ENGINE"),
+        'NAME': config("NAME"),         
+        'USER': config("USER"),       
+        'PASSWORD': config("PASSWORD"),     
+        'HOST': config("HOST"),           
+        'PORT': config("PORT"),   
+        'OPTIONS': {
+        'client_encoding': 'UTF8',
+        },            
     }
 }
+
 
 
 # Password validation
@@ -124,11 +137,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']  # si usas carpeta 'static' global
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static"]
+
+import os
+os.makedirs(BASE_DIR / "static", exist_ok=True)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# guidehub/settings.py
+AUTH_USER_MODEL = 'accounts.CustomUser'

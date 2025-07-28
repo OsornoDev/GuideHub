@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import User
+from .models import CustomUser
 import re
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import CustomUser
 
 def validate_password(password):
     errors = []
@@ -27,7 +29,7 @@ class RegistroForm(UserCreationForm):
     email = forms.EmailField(required=True)
     
     class Meta:
-        model = User
+        model = CustomUser
         fields = ["username", "email", "password1", "password2"]
     
     def clean_password1(self):
@@ -37,13 +39,126 @@ class RegistroForm(UserCreationForm):
         return password
 
 class LoginForm(AuthenticationForm):
-    username = forms.CharField(label="Usuario/Email")
+    username = forms.CharField(
+        label="Usuario/Email",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'id': 'username',
+            'placeholder': 'Usuario o email'
+        })
+    )
+    password = forms.CharField(
+        label="Contraseña",
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'id': 'password',
+            'placeholder': 'Tu contraseña'
+        })
+    )
     
     def clean_username(self):
         username = self.cleaned_data.get('username')
         if '@' in username:
             try:
-                return User.objects.get(email=username).username
-            except User.DoesNotExist:
+                return CustomUser.objects.get(email=username).username
+            except CustomUser.DoesNotExist:
                 pass
         return username
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'email', 'user_type')
+
+class CustomUserChangeForm(UserChangeForm):
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'email', 'user_type', 'bio', 'avatar')
+
+
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser
+
+class RegistroForm(UserCreationForm):
+    username = forms.CharField(
+        label="Nombre de usuario",
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'id': 'register-username',
+            'placeholder': 'Tu nombre de usuario'
+        })
+    )
+    email = forms.EmailField(
+        label="Email",
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'id': 'register-email',
+            'placeholder': 'tu@email.com'
+        })
+    )
+    password1 = forms.CharField(
+        label="Contraseña",
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'id': 'register-password',
+            'placeholder': 'Crea una contraseña segura'
+        })
+    )
+    password2 = forms.CharField(
+                label="Confirmar Contraseña",
+                strip=False,
+                widget=forms.PasswordInput(attrs={
+                    'class': 'form-control',
+                    'id': 'register-password-confirm',  # antes era register-password2
+                    'placeholder': 'Confirma tu contraseña'
+            })
+        )
+    terms = forms.BooleanField(
+            label='Acepto',
+            widget=forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'id': 'terms',   # antes era register-terms
+            })
+        )
+
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'email', 'password1', 'password2')
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if CustomUser.objects.filter(email=email).exists():
+            raise forms.ValidationError('Este correo electrónico ya está registrado.')
+        return email
+
+    def __init__(self, *args, **kwargs):
+        super(RegistroForm, self).__init__(*args, **kwargs)
+        # Actualizamos widget de username
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'id': 'register-username',
+            'placeholder': 'Tu nombre de usuario'
+        })
+        # Ajustamos widget de email
+        self.fields['email'].widget.attrs.update({
+            'class': 'form-control',
+            'id': 'register-email',
+            'placeholder': 'tu@email.com'
+        })
+        # Ocultamos help_texts por defecto si quieres
+        for field in ['username', 'password1', 'password2']:
+            if field in self.fields:
+                self.fields[field].help_text = None
+
+
+    def clean(self):
+        cleaned = super().clean()
+        p1 = cleaned.get("password1")
+        p2 = cleaned.get("password2")
+        if p1 and p2 and p1 != p2:
+            self.add_error('password2', "Las contraseñas no coinciden.")
+        return cleaned
