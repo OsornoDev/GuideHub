@@ -17,7 +17,7 @@
 
     <!-- Filtros mejorados -->
     <div class="filters d-flex flex-wrap justify-content-center mb-5 gap-3">
-        <button class="btn btn-outline-primary btn-lg px-4 rounded-pill filter-btn active">
+        <button class="btn btn-outline-primary btn-lg px-4 rounded-pill filter-btn">
             <i class="bi bi-grid me-2"></i>Todos
         </button>
         <button class="btn btn-outline-primary btn-lg px-4 rounded-pill filter-btn">
@@ -43,10 +43,10 @@
             <div class="input-group input-group-lg">
                 <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
                 <select class="form-select">
-                    <option selected>Ordenar por: Popularidad</option>
-                    <option>Ordenar por: Mejor valorados</option>
-                    <option>Ordenar por: Más recientes</option>
-                    <option>Ordenar por: Nombre (A-Z)</option>
+                    <option value="-rating" selected>Ordenar por: Popularidad</option>
+                    <option value="-metacritic">Ordenar por: Mejor valorados</option>
+                    <option value="-released">Ordenar por: Más recientes</option>
+                    <option value="name">Ordenar por: Nombre (A-Z)</option>
                 </select>
             </div>
         </div>
