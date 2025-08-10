@@ -1,9 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from .models import CustomUser
 import re
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser
+from django.contrib.auth import get_user_model
 
 def validate_password(password):
     errors = []
@@ -38,15 +37,17 @@ class RegistroForm(UserCreationForm):
             raise forms.ValidationError(errors)
         return password
 
+User = get_user_model()
+
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
         label="Usuario/Email",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'id': 'username',
             'placeholder': 'Usuario o email'
         })
     )
+    
     password = forms.CharField(
         label="Contraseña",
         strip=False,
@@ -56,15 +57,20 @@ class LoginForm(AuthenticationForm):
             'placeholder': 'Tu contraseña'
         })
     )
-    
-    def clean_username(self):
+    def clean(self):
         username = self.cleaned_data.get('username')
-        if '@' in username:
+        password = self.cleaned_data.get('password')
+
+        # Si el usuario ingresa un email, buscar el username asociado
+        if username and '@' in username:
             try:
-                return CustomUser.objects.get(email=username).username
-            except CustomUser.DoesNotExist:
+                user = User.objects.get(email=username)
+                self.cleaned_data['username'] = user.username
+            except User.DoesNotExist:
+                # Mantener el valor original para mostrar el error estándar
                 pass
-        return username
+
+        return super().clean()
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:

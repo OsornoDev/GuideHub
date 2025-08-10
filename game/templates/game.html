@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+    <style>
+    .detail-header {
+        background: url('{{ juego.background_image }}') center/cover no-repeat;
+        height: 400px;
+        position: relative;
+        border-radius: .5rem;
+        overflow: hidden;
+    }
+    .detail-header::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+    }
+    .detail-title {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        color: #f8f9fa;
+        z-index: 1;
+    }
+    .genre-badge {
+        background-color: #6c757d;
+        color: #f8f9fa;
+        margin-right: .5rem;
+    }
+    .spec-list dt {
+        font-weight: 600;
+    }
+    .spec-list dd {
+        margin-bottom: 1rem;
+    }
+    .btn-ver-detalles {
+    background-color: #343a40 !important;
+    border: 2px solid #343a40 !important;
+    color: #f8f9fa !important;
+    transition: background-color .2s, border-color .2s;
+    }
+    .btn-ver-detalles:hover,
+    .btn-ver-detalles:focus {
+    background-color: #495057 !important;
+    border-color: #495057 !important;
+    color: #fff !important;
+    box-shadow: none;
+    }
+    </style>
+    {% endblock %}
+
+    {% block content %}
+    <main class="container py-5">
+    <!-- Header con imagen de fondo y título -->
+    <section class="detail-header mb-5">
+        <h1 class="detail-title display-4 fw-bold">{{ juego.name }}</h1>
+    </section>
+
+    <div class="row">
+        <!-- Datos principales -->
+        <div class="col-lg-8">
+        <div class="mb-4">
+            <h4 class="fw-semibold">Descripción</h4>
+            <p class="text-muted">{{ juego.description_raw|safe }}</p>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div class="col">
+            <dl class="spec-list">
+                <dt>Lanzamiento</dt>
+                <dd>{{ juego.released }}</dd>
+                <dt>Rating</dt>
+                <dd><i class="bi bi-star-fill text-warning"></i> {{ juego.rating }}</dd>
+                <dt>Metacritic</dt>
+                <dd>{{ juego.metacritic|default:"N/A" }}</dd>
+            </dl>
+            </div>
+            <div class="col">
+            <dl class="spec-list">
+                <dt>Plataformas</dt>
+                <dd>
+                {% for p in juego.platforms %}
+                    <span class="badge bg-secondary me-1">{{ p.platform.name }}</span>
+                {% endfor %}
+                </dd>
+                <dt>Géneros</dt>
+                <dd>
+                {% for g in juego.genres %}
+                    <span class="badge genre-badge">{{ g.name }}</span>
+                {% endfor %}
+                </dd>
+            </dl>
+            </div>
+        </div>
+        </div>
+
+        <!-- Sidebar: Web oficial y trailers -->
+        <div class="col-lg-4">
+        <div class="card bg-light mb-4">
+            <div class="card-body text-center">
+            <h5>Acceso rápido</h5>
+            <a href="{{ juego.website }}" target="_blank"
+            class="btn btn-ver-detalles w-100 mb-3">
+                <i class="bi bi-globe me-2"></i>Web oficial
+            </a>
+            {% if juego.clip and juego.clip.clip %}
+            <h6>Trailer</h6>
+            <video controls class="w-100 rounded">
+                <source src="{{ juego.clip.clip }}" type="video/mp4">
+                Tu navegador no soporta video.
+            </video>
+            {% endif %}
+            </div>
+        </div>
+        {% if juego.screenshots %}
+        <div class="card">
+            <div class="card-body">
+            <h6 class="card-title">Screenshots</h6>
+            <div class="row g-2">
+                {% for shot in juego.short_screenshots|slice:":4" %}
+                <div class="col-6">
+                <img src="{{ shot.image }}" class="img-fluid rounded" alt="Screenshot">
+                </div>
+                {% endfor %}
+            </div>
+            </div>
+        </div>
+        {% endif %}
+        </div>
+    </div>
+</main>
+{% endblock %}

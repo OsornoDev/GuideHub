@@ -3,38 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}GuideHub{% endblock %}</title>
-    <link 
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
-        rel="stylesheet">
-        {% block styles %}{% endblock %}
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+    {% block styles %}{% endblock %}
     </head>
     <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+
+    <!-- navbar en gris claro -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-secondary mb-4">
         <div class="container">
-        <a class="navbar-brand" href="/">GuideHub</a>
+        <a class="navbar-brand text-white fw-bold" href="/">GuideHub</a>
         <ul class="navbar-nav ms-auto">
             {% if user.is_authenticated %}
-            <li class="nav-item"><a class="nav-link" href="#">Usuarios</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Salir</a></li>
+            <li class="nav-item">
+                <img src="{% static 'img/usuario.png' %}" alt="Usuario" width="24" height="24" class="me-2 rounded-circle">
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'cerrar-sesion' %}">Salir</a>
+            </li>
             {% else %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Entrar</a></li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'login' %}">Entrar</a>
+            </li>
             {% endif %}
         </ul>
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container mb-5">
         {% if messages %}
         {% for m in messages %}
             <div class="alert alert-{{ m.tags }} alert-dismissible fade show">
-            {{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            {{ m }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         {% endfor %}
         {% endif %}
         {% block content %}{% endblock %}
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {% block scripts %} {% endblock %}
+    
 </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        {% block scripts %}
+        <script>
+            (function() {
+            let timer;
+            const logoutUrl = "{% url 'cerrar-sesion' %}";
+
+            function resetTimer() {
+                clearTimeout(timer);
+                // 5 minutos = 300000 ms
+                timer = setTimeout(() => {
+                alert("Tu sesión ha expirado por inactividad.");
+                window.location.href = logoutUrl;
+                }, 180000);
+            }
+
+            // Eventos que cuentan como actividad
+            ['mousemove','mousedown','click','scroll','keypress','touchstart'].forEach(evt =>
+                document.addEventListener(evt, resetTimer, true)
+            );
+
+            // Inicia el timer nada más cargar el script
+            resetTimer();
+            })();
+    </script>
+    {% endblock %}
 </html>

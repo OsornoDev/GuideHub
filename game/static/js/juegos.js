@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     const params        = new URLSearchParams(window.location.search);
     const currentPage   = parseInt(params.get('page'))     || 1;

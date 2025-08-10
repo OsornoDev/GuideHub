@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import CustomUser
 from .forms import CustomUserChangeForm, LoginForm, RegistroForm
 from django.urls import reverse
+from utils.email import send_mail_django
 # Create your views here.
 
 def prueba(request):
@@ -53,28 +54,28 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return reverse('user-detail', kwargs={'pk': self.object.pk})
         
 def inicio_sesion(request):
-    login_form    = LoginForm(request, data=request.POST or None, prefix='login')
-    signup_form   = RegistroForm(request.POST or None, prefix='signup')
+    login_form  = LoginForm(request, data=request.POST if request.POST.get('form_type') == 'login' else None, prefix='login')
+    signup_form = RegistroForm(request.POST if request.POST.get('form_type') == 'signup' else None, prefix='signup')
 
-    # solo procesamos si es POST
     if request.method == 'POST':
-        # sabemos qué form vino por este campo oculto
         form_type = request.POST.get('form_type')
 
         if form_type == 'login' and login_form.is_valid():
-            print('login')
             user = login_form.get_user()
-            print(user)
             auth_login(request, user)
             return redirect('home')
 
-        if form_type == 'signup':
-            if signup_form.is_valid():
-                user = signup_form.save()
-                auth_login(request, user)
-                return redirect('home')
-            else:
-                print("Errores de registro:", signup_form.errors)
+        if form_type == 'signup' and signup_form.is_valid():
+            user = signup_form.save()
+            auth_login(request, user)
+
+            send_mail_django(
+                to_email=user.email,
+                subject="Bienvenido a GuideHub",
+                template_name="bienvenida",
+                data={"usuario": user.username}
+            )
+            return redirect('home')
 
     return render(request, 'login.html', {
         'login_form':  login_form,

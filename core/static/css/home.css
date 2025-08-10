@@ -1,0 +1,14 @@
+    .hero {
+        background-color: #e9ecef;
+        border-radius: .5rem;
+    }
+    .hero h1 { color: #343a40; }
+    .hero p  { color: #495057; }
+    .btn-primary-custom {
+        background-color: #6c757d;
+        border: none;
+        color: #fff;
+    }
+    .btn-primary-custom:hover {
+        background-color: #5a6268;
+    }

@@ -1,22 +1,95 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block content %}
+{% block styles %}
+    <style>
+    .hero {
+        background-color: #e9ecef;
+        border-radius: .5rem;
+    }
+    .hero h1 { color: #343a40; }
+    .hero p  { color: #495057; }
+    .btn-primary-custom {
+        background-color: #6c757d;
+        border: none;
+        color: #fff;
+    }
+    .btn-primary-custom:hover {
+        background-color: #5a6268;
+    }
+    .btn-ver-detalles {
+    background-color: #343a40;
+    color: #f8f9fa;
+    border: 2px solid #343a40;
+    transition: background-color .2s, border-color .2s;
+    }
+    .btn-ver-detalles:hover {
+        background-color: #495057;
+        border-color: #495057;
+        color: #fff;
+    }
+    </style>
+    {% endblock %}
 
-<main class="container py-5">
+    {% block content %}
+    <main class="py-5">
+    <!-- Hero gris suave -->
+    <section class="hero text-center p-5 shadow-sm mb-5">
+        <h1 class="display-3 fw-bold">GuideHub</h1>
+        <p class="lead mb-4">
+        Explora los videojuegos más destacados de todos los tiempos. Encuentra tu próxima aventura.
+        </p>
 
-    <section class="card card-body">
-        <h1 class="display-1 text-center">GuideHub</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aut modi nostrum nam sint ratione, quidem reprehenderit sapiente repellat. Vel eligendi beatae incidunt pariatur neque ex rerum, accusamus fuga deserunt. </p>
-    <div class="text-center">
-        <a class="btn btn-secondary" href="{% url 'login'%}">
-            Signin
-        </a>
-        <a class="btn btn-secondary" href="{% url 'login'%}">
-            Signup
-        </a>
-    </div>
+    </section>
+    <!-- Galería de juegos -->
+    <section class="container">
+    <div class="row g-4">
+        {% for juego in juegos|slice:":8" %}
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="game-card card h-100 shadow-sm border-0 rounded-4 overflow-hidden d-flex flex-column">
+            <div class="game-image-container position-relative">
+                <div class="ratio ratio-4x3 overflow-hidden">
+                <img src="{{ juego.background_image }}" alt="{{ juego.name }}" class="game-image object-fit-cover w-100 h-100">
+                </div>
+                <div class="game-rating position-absolute top-0 end-0 m-3 bg-dark text-white fw-bold rounded-pill px-2 py-1 fs-6">
+                <i class="bi bi-star-fill me-1"></i>{{ juego.rating }}
+                </div>
+            </div>
+            <div class="game-content p-3 bg-white d-flex flex-column flex-grow-1">
+                <h5 class="game-title fw-bold mb-2 fs-5">{{ juego.name }}</h5>
+                <div class="game-meta d-flex justify-content-between align-items-center mb-2">
+                    <div class="game-release d-flex align-items-center">
+                        <i class="bi bi-calendar3 me-2 text-secondary fs-6"></i>
+                        {% if juego.released %}
+                        <span class="text-muted small">{{ juego.released }}</span>
+                        {% else %}
+                        <span class="text-danger small">Por anunciar</span>
+                        {% endif %}
+                    </div>
+                    <div class="game-platforms fs-6 text-secondary">
+                        <i class="bi bi-windows mx-1"></i>
+                        <i class="bi bi-playstation mx-1"></i>
+                        <i class="bi bi-xbox mx-1"></i>
+                    </div>
+                </div>
+            </div>
+                <div class="px-3 pb-3">
+                        <a href="{% url 'game-detail' slug=juego.slug %}"
+                        class="btn btn-ver-detalles rounded-pill px-3 py-2 w-100">
+                            <i class="bi bi-play-fill me-1"></i>Ver detalles
+                        </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
     </section>
 
-</main>
-
+    <!-- Ver más juegos -->
+    <div class="text-center mt-5">
+        <a href="{% url 'list-games' %}?page={{ next_page }}" class="btn btn-dark btn-lg rounded-pill px-5 py-3">
+            <i class="bi bi-chevron-double-down me-2"></i>Ver más juegos
+        </a>
+    </div>
+    </main>
 {% endblock %}

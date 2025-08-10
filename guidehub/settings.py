@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
+from dotenv import load_dotenv
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,6 +29,13 @@ SECRET_KEY = 'django-insecure-bnd-g5&!l2)74nov7jbimt+8tz+yxhim6f=lyitwndcg1-x&vt
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+
+# Expira la sesión a los 5 minutos de inactividad
+SESSION_COOKIE_AGE = 300  # 5 minutos = 300 segundos
+
+# Hace que la sesión se reinicie con cada actividad del usuario
+SESSION_SAVE_EVERY_REQUEST = True
 
 
 # Application definition
@@ -95,6 +103,18 @@ DATABASES = {
         },            
     }
 }
+
+load_dotenv()
+
+RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
+RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+EMAIL_BACKEND = config("EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_PORT = config("EMAIL_PORT", cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 
 

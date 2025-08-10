@@ -33,6 +33,8 @@
         function setupPasswordToggle(inputId, toggleId) {
             const passwordInput = document.getElementById(inputId);
             const togglePassword = document.getElementById(toggleId);
+
+            if (!passwordInput || !togglePassword) return;
             
             togglePassword.addEventListener('click', function() {
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';

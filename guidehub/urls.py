@@ -25,7 +25,9 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('', v_core.home, name='home'),
     path('privacidad/', v_core.privacy_policy, name='privacidad'),
-    path('juegos/', include('game.urls'))
+    path('juegos/', include('game.urls')),
+    path('cerrar-sesion/', v_core.cerrar_sesion, name='cerrar-sesion'), 
+    path('session-status/', v_core.session_status, name='session-status')
 ]
 
 if settings.DEBUG:
