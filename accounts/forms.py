@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from .models import CustomUser
 import re
+import requests
+from django.conf import settings
 from django.contrib.auth import get_user_model
 
 def validate_password(password):
@@ -25,6 +27,27 @@ def validate_password(password):
     return errors
 
 class RegistroForm(UserCreationForm):
+    recaptcha_token = forms.CharField(widget=forms.HiddenInput(), required=False)
+    def clean(self):
+        cleaned_data = super().clean()
+        token = self.data.get("g-recaptcha-response")
+
+        if not token:
+            raise forms.ValidationError("Por favor, completa el reCAPTCHA.")
+
+        resp = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={
+                "secret": settings.RECAPTCHA_PRIVATE_KEY,
+                "response": token
+            }
+        )
+        result = resp.json()
+        if not result.get("success"):
+            raise forms.ValidationError("Error en reCAPTCHA, intente de nuevo.")
+
+        return cleaned_data
+
     email = forms.EmailField(required=True)
     
     class Meta:
@@ -57,6 +80,27 @@ class LoginForm(AuthenticationForm):
             'placeholder': 'Tu contraseña'
         })
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        token = self.data.get("g-recaptcha-response")
+
+        if not token:
+            raise forms.ValidationError("Por favor, completa el reCAPTCHA.")
+
+        resp = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={
+                "secret": settings.RECAPTCHA_PRIVATE_KEY,
+                "response": token
+            }
+        )
+        result = resp.json()
+        if not result.get("success"):
+            raise forms.ValidationError("Error en reCAPTCHA, intente de nuevo.")
+
+        return cleaned_data
+    
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')

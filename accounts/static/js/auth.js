@@ -130,4 +130,17 @@
                 text.classList.add('rule-invalid');
             }
         }
-        
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const recaptcha = this.querySelector('.g-recaptcha');
+                    if(recaptcha && !grecaptcha.getResponse()) {
+                        e.preventDefault();
+                        alert('Por favor, completa el reCAPTCHA');
+                        recaptcha.style.border = '1px solid red';
+                    }
+                });
+            });
+        });

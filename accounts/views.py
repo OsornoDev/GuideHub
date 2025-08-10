@@ -5,7 +5,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import CustomUser
 from .forms import CustomUserChangeForm, LoginForm, RegistroForm
 from django.urls import reverse
-from utils.email import send_mail_django
+from accounts.email import send_mail_django
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.conf import settings
+from django import forms
 # Create your views here.
 
 def prueba(request):
@@ -58,6 +62,23 @@ def inicio_sesion(request):
     signup_form = RegistroForm(request.POST if request.POST.get('form_type') == 'signup' else None, prefix='signup')
 
     if request.method == 'POST':
+        # Aquí iría tu lógica para verificar el login...
+        
+        # Si el login es exitoso:
+        subject = "Bienvenido a GuideHub"
+        from_email = "tu_usuario@dominio.com"  # Debe coincidir con tu EMAIL_HOST_USER
+        to_email = ["usuario@gmail.com"]       # Cambia por el correo real del usuario
+
+        # Renderizar el HTML de la plantilla
+        html_content = render_to_string("bienvenida.html", {
+            "usuario": "Eduardo"  # Aquí pasas variables al HTML
+        })
+
+        email = EmailMessage(subject, html_content, from_email, to_email)
+        email.content_subtype = "html"  # Importante para que se envíe como HTML
+        email.send()
+
+    if request.method == 'POST':
         form_type = request.POST.get('form_type')
 
         if form_type == 'login' and login_form.is_valid():
@@ -80,4 +101,5 @@ def inicio_sesion(request):
     return render(request, 'login.html', {
         'login_form':  login_form,
         'signup_form': signup_form,
+        'RECAPTCHA_PUBLIC_KEY': settings.RECAPTCHA_PUBLIC_KEY,
     })

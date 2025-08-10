@@ -46,6 +46,7 @@
                                 {{ login_form.username }}
                             </div>
                             
+                            
                             <div class="mb-3">
                                 {{ login_form.password.label_tag }}
                                 <div class="input-group">
@@ -56,6 +57,7 @@
                                 </div>
                             </div>
                             
+                            <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div>
                             
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="remember_me" name="login-remember_me">
@@ -135,6 +137,7 @@
                                     {{ signup_form.password2 }}
                                     {{ signup_form.password2.errors }}
                                 </div>
+                                <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div>
                                 <div class="mb-3 form-check">
                                     {{ signup_form.terms }}
                                     {{ signup_form.terms.label_tag|safe }}
@@ -156,6 +159,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block scripts %} 
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="{% static 'js/auth.js' %}"></script>
     {% endblock %}
 </body>
