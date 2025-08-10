@@ -26,40 +26,6 @@ def validate_password(password):
             break
     return errors
 
-class RegistroForm(UserCreationForm):
-    recaptcha_token = forms.CharField(widget=forms.HiddenInput(), required=False)
-    def clean(self):
-        cleaned_data = super().clean()
-        token = self.data.get("g-recaptcha-response")
-
-        if not token:
-            raise forms.ValidationError("Por favor, completa el reCAPTCHA.")
-
-        resp = requests.post(
-            "https://www.google.com/recaptcha/api/siteverify",
-            data={
-                "secret": settings.RECAPTCHA_PRIVATE_KEY,
-                "response": token
-            }
-        )
-        result = resp.json()
-        if not result.get("success"):
-            raise forms.ValidationError("Error en reCAPTCHA, intente de nuevo.")
-
-        return cleaned_data
-
-    email = forms.EmailField(required=True)
-    
-    class Meta:
-        model = CustomUser
-        fields = ["username", "email", "password1", "password2"]
-    
-    def clean_password1(self):
-        password = self.cleaned_data.get("password1")
-        if errors := validate_password(password):
-            raise forms.ValidationError(errors)
-        return password
-
 User = get_user_model()
 
 class LoginForm(AuthenticationForm):
@@ -167,6 +133,27 @@ class RegistroForm(UserCreationForm):
                     'placeholder': 'Confirma tu contraseña'
             })
         )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        token = self.data.get("g-recaptcha-response")
+
+        if not token:
+            raise forms.ValidationError("Por favor, completa el reCAPTCHA.")
+
+        resp = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={
+                "secret": settings.RECAPTCHA_PRIVATE_KEY,
+                "response": token
+            }
+        )
+        result = resp.json()
+        if not result.get("success"):
+            raise forms.ValidationError("Error en reCAPTCHA, intente de nuevo.")
+
+        return cleaned_data
+    
     terms = forms.BooleanField(
             label='Acepto',
             widget=forms.CheckboxInput(attrs={
@@ -204,9 +191,23 @@ class RegistroForm(UserCreationForm):
             if field in self.fields:
                 self.fields[field].help_text = None
 
-
     def clean(self):
         cleaned = super().clean()
+        token = self.data.get("g-recaptcha-response")
+        if not token:
+            raise forms.ValidationError("Por favor, completa el reCAPTCHA.")
+        try:
+            resp = requests.post(
+                "https://www.google.com/recaptcha/api/siteverify",
+                data={"secret": settings.RECAPTCHA_PRIVATE_KEY, "response": token},
+                timeout=10
+            )
+            result = resp.json()
+        except Exception:
+            raise forms.ValidationError("Error validando reCAPTCHA, inténtalo de nuevo.")
+
+        if not result.get("success"):
+            raise forms.ValidationError("Error en reCAPTCHA, inténtalo de nuevo.")
         p1 = cleaned.get("password1")
         p2 = cleaned.get("password2")
         if p1 and p2 and p1 != p2:

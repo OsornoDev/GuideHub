@@ -5,6 +5,8 @@
             document.getElementById('register-form').classList.remove('d-none');
             document.getElementById('login-tab').classList.remove('active');
             document.getElementById('register-tab').classList.add('active');
+
+            renderRecaptchaSignup();
         });
         
         document.getElementById('switch-to-login').addEventListener('click', function(e) {
@@ -20,6 +22,8 @@
             document.getElementById('register-form').classList.remove('d-none');
             document.getElementById('login-tab').classList.remove('active');
             this.classList.add('active');
+
+            renderRecaptchaSignup();
         });
         
         document.getElementById('login-tab').addEventListener('click', function() {

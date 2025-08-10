@@ -137,7 +137,8 @@
                                     {{ signup_form.password2 }}
                                     {{ signup_form.password2.errors }}
                                 </div>
-                                <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div>
+                                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response-signup">
+                                <div id="recaptcha-signup" style="min-height:78px;"></div>
                                 <div class="mb-3 form-check">
                                     {{ signup_form.terms }}
                                     {{ signup_form.terms.label_tag|safe }}
@@ -161,6 +162,50 @@
     {% block scripts %} 
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="{% static 'js/auth.js' %}"></script>
+    <!-- carga explícita de la API (render=explicit para renderizar manualmente) -->
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadRecaptcha&render=explicit" async defer></script>
+    <script>
+    window.recaptchaReady = false;
+    function onloadRecaptcha() {
+        window.recaptchaReady = true;
+    }
+
+    // widget id (null si no renderizado aún)
+    let signupRecaptchaWidgetId = null;
+
+    function renderRecaptchaSignup() {
+        // si ya renderizado, no volver a hacerlo
+        if (!window.recaptchaReady) {
+        // si la API aún no está lista, reintenta dentro de 200ms
+        return setTimeout(renderRecaptchaSignup, 200);
+        }
+        if (signupRecaptchaWidgetId !== null) {
+        // ya renderizado: opcionalmente resetear
+        try { grecaptcha.reset(signupRecaptchaWidgetId); } catch(e) {}
+        return;
+        }
+        const container = document.getElementById('recaptcha-signup');
+        if (!container) return;
+        signupRecaptchaWidgetId = grecaptcha.render('recaptcha-signup', {
+        'sitekey': '{{ RECAPTCHA_PUBLIC_KEY }}',
+        'theme': 'light',
+        'callback': function(token) {
+            document.getElementById('g-recaptcha-response-signup').value = token;
+        },
+        'expired-callback': function() {
+            document.getElementById('g-recaptcha-response-signup').value = '';
+        }
+        });
+    }
+
+    // función para limpiar token si cambias de pestaña/cierras form
+    function resetRecaptchaSignup() {
+        if (signupRecaptchaWidgetId !== null && window.grecaptcha) {
+        try { grecaptcha.reset(signupRecaptchaWidgetId); } catch (e) {}
+        document.getElementById('g-recaptcha-response-signup').value = '';
+        }
+    }
+    </script>
     {% endblock %}
 </body>
 </html>

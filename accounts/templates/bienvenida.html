@@ -1,26 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"></head>
-<body style="font-family: Arial, sans-serif;">
-    <div style="max-width:600px;margin:auto;padding:20px;border:1px solid #e0e0e0;">
-        <h2>Hola {{ user.username }} 👋</h2>
-        <p>Gracias por registrarte en <strong>GuideHub</strong>. Para activar tu cuenta haz clic en el siguiente botón:</p>
+<head>
+    <meta charset="utf-8">
+    <title>Activa tu cuenta - GuideHub</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
+        
+        <h2 style="color: #333;">Hola {{ usuario }} 👋</h2>
+        
+        <p>Gracias por registrarte en <strong>GuideHub</strong>.  
+        Para activar tu cuenta y comenzar a usar la plataforma, haz clic en el siguiente botón:</p>
 
-        <p style="text-align:center;margin:30px 0;">
-        <a href="{{ activate_url }}" style="display:inline-block;background:#343a40;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">
-            Activar mi cuenta
-        </a>
+        <p style="text-align: center; margin: 30px 0;">
+            <a href="{{ activate_url }}" 
+                style="display: inline-block; background: #343a40; color: #fff; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                Activar mi cuenta
+            </a>
         </p>
 
-        <p>Si el botón no funciona copia y pega esta URL en tu navegador:</p>
-        <p style="word-break:break-all;"><small>{{ activate_url }}</small></p>
+        <p>Si el botón no funciona, copia y pega esta URL en tu navegador:</p>
+        <p style="word-break: break-all; color: #555;">
+            <small>{{ activate_url }}</small>
+        </p>
 
-        {% comment %} logo inline: Content-ID = <logo> {% endcomment %}
-        <div style="margin-top:20px;">
-        <img src="cid:logo" alt="GuideHub" style="width:120px;">
+        <hr style="margin: 30px 0;">
+
+        {% comment %} Imagen inline con Content-ID "logo" {% endcomment %}
+        <div style="text-align: center; margin-top: 20px;">
+            <img src="cid:logo" alt="GuideHub" style="width: 120px;">
         </div>
 
-        <p>Saludos,<br>El equipo de GuideHub</p>
+        <p style="margin-top: 20px; color: #555;">
+            Saludos,<br>
+            El equipo de <strong>GuideHub</strong>
+        </p>
     </div>
 </body>
 </html>
