@@ -23,13 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-bnd-g5&!l2)74nov7jbimt+8tz+yxhim6f=lyitwndcg1-x&vt'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default = False, cast = bool)
 
 ALLOWED_HOSTS = []
 
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME :
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Expira la sesión a los 5 minutos de inactividad
 SESSION_COOKIE_AGE = 300  # 5 minutos = 300 segundos
@@ -57,6 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -93,11 +97,11 @@ WSGI_APPLICATION = 'guidehub.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': config("ENGINE"),
-        'NAME': config("NAME"),         
-        'USER': config("USER"),       
-        'PASSWORD': config("PASSWORD"),     
-        'HOST': config("HOST"),           
-        'PORT': config("PORT"),   
+        'NAME': config('DB_NAME'),         
+        'USER': config('DB_USER'),       
+        'PASSWORD': config('DB_PASSWORD'),     
+        'HOST': config('DB_HOST'),           
+        'PORT': config('DB_PORT', cast = int),   
         'OPTIONS': {
         'client_encoding': 'UTF8',
         },            
@@ -158,6 +162,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
+if not DEBUG:
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+    # and renames the files with unique names for each version to support long-term caching
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    
 STATICFILES_DIRS = [BASE_DIR / 'static']  # si usas carpeta 'static' global
 
 
