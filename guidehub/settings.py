@@ -93,21 +93,10 @@ WSGI_APPLICATION = 'guidehub.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-import dj_database_url
-from decouple import config
-from dotenv import load_dotenv
-if os.getenv('DATABASE_URL'):
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL'),
-            conn_max_age=600,
-            ssl_require=True
-        )
-    }
-else:
-    DATABASES = {
+
+DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgres',
         'NAME': config('DB_NAME'),         
         'USER': config('DB_USER'),       
         'PASSWORD': config('DB_PASSWORD'),     
