@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-header bg-white border-0 py-4">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <div class="password-icon mx-auto rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-shield-lock fs-1 text-primary"></i>
+                            </div>
+                        </div>
+                        <h2 class="fw-bold mb-2">Establecer nueva contraseña</h2>
+                        <p class="text-muted">Crea una contraseña segura para tu cuenta</p>
+                    </div>
+                </div>
+                
+                <div class="card-body px-4 py-4">
+                    {% if form.errors %}
+                    <div class="alert alert-danger border-0 rounded-3 mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                            <div>
+                                <strong>Por favor corrige los siguientes errores:</strong>
+                                <ul class="mt-2 mb-0">
+                                    {% for field, errors in form.errors.items %}
+                                        {% for error in errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="password1" class="form-label fw-medium">Nueva contraseña</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-key text-primary"></i></span>
+                                <input type="password" name="password1" class="form-control py-2 border-start-0" 
+                                       id="password1" placeholder="Ingresa tu nueva contraseña" required>
+                                <button class="btn btn-outline-secondary toggle-password" type="button">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text mt-1">
+                                <small>La contraseña debe contener al menos 8 caracteres, incluyendo letras y números.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password2" class="form-label fw-medium">Confirmar contraseña</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-key-fill text-primary"></i></span>
+                                <input type="password" name="password2" class="form-control py-2 border-start-0" 
+                                       id="password2" placeholder="Confirma tu nueva contraseña" required>
+                                <button class="btn btn-outline-secondary toggle-password" type="button">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback mt-1" id="passwordMismatch">
+                                Las contraseñas no coinciden.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-primary py-2 fw-medium rounded-3" type="submit">
+                                <i class="bi bi-check-circle me-2"></i>Guardar nueva contraseña
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer bg-white border-0 pt-0 pb-4 px-4 text-center">
+                    <p class="mb-0 text-muted">
+                        ¿Recordaste tu contraseña? <a href="{% url 'login' %}" class="text-decoration-none fw-medium">Iniciar sesión</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .password-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(13, 110, 253, 0.1);
+    }
+    
+    .card {
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        border-color: #86b7fe;
+    }
+    
+    .input-group-text {
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus + .input-group-text {
+        background-color: #e7f1ff;
+        border-color: #86b7fe;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #0b5ed7, #0a58ca);
+        transform: scale(1.02);
+    }
+    
+    .toggle-password:hover {
+        background-color: #e9ecef;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para mostrar/ocultar contraseña
+    const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+    togglePasswordButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('input');
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            
+            // Cambiar icono
+            const icon = this.querySelector('i');
+            if (type === 'password') {
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+        });
+    });
+    
+    // Validación de coincidencia de contraseñas
+    const password1 = document.getElementById('password1');
+    const password2 = document.getElementById('password2');
+    const passwordMismatch = document.getElementById('passwordMismatch');
+    
+    function validatePassword() {
+        if (password1.value && password2.value && password1.value !== password2.value) {
+            password2.classList.add('is-invalid');
+            passwordMismatch.style.display = 'block';
+        } else {
+            password2.classList.remove('is-invalid');
+            passwordMismatch.style.display = 'none';
+        }
+    }
+    
+    password1.addEventListener('input', validatePassword);
+    password2.addEventListener('input', validatePassword);
+    
+    // Validación de formulario
+    const form = document.querySelector('.needs-validation');
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        // Verificar coincidencia de contraseñas al enviar
+        if (password1.value !== password2.value) {
+            event.preventDefault();
+            password2.classList.add('is-invalid');
+            passwordMismatch.style.display = 'block';
+        }
+        
+        form.classList.add('was-validated');
+    }, false);
+});
+</script>
+{% endblock %}

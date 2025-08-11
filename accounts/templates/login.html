@@ -62,7 +62,9 @@
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="remember_me" name="login-remember_me">
                                 <label class="form-check-label" for="remember_me">Recordar sesión</label>
-                                <a href="#" class="float-end">¿Olvidaste tu contraseña?</a>
+                                <a href="#" class="float-end" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                                    ¿Olvidaste tu contraseña?
+                                </a>
                             </div>
                             
                             <button type="submit" class="btn btn-primary w-100 py-2 mb-3">Iniciar Sesión</button>
@@ -207,5 +209,31 @@
     }
     </script>
     {% endblock %}
+
+    <!-- Modal Recuperar Contraseña -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form method="post" action="{% url 'solicitar_reset_password' %}">
+            {% csrf_token %}
+            <div class="modal-header">
+            <h5 class="modal-title" id="resetPasswordModalLabel">Recuperar contraseña</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+            <div class="mb-3">
+                <label for="reset-email" class="form-label">Correo electrónico</label>
+                <input type="email" name="email" class="form-control" id="reset-email" placeholder="Ingresa tu correo registrado" required>
+            </div>
+            <p class="text-muted small">Te enviaremos un enlace para restablecer tu contraseña si tu correo está registrado.</p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Enviar enlace</button>
+            </div>
+        </form>
+        </div>
+    </div>
+    </div>
 </body>
 </html>

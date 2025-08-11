@@ -213,3 +213,14 @@ class RegistroForm(UserCreationForm):
         if p1 and p2 and p1 != p2:
             self.add_error('password2', "Las contraseñas no coinciden.")
         return cleaned
+    
+from django import forms
+
+class PasswordResetRequestForm(forms.Form):
+    email = forms.EmailField(
+        label="Correo electrónico",
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Introduce tu correo registrado'
+        })
+    )

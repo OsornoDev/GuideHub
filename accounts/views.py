@@ -143,3 +143,67 @@ def activar_cuenta(request, uidb64, token):
         return render(request, 'exitosa.html')
     else:
         return render(request, 'fallida.html')
+    
+
+from .forms import PasswordResetRequestForm
+from django.contrib import messages
+def solicitar_reset_password(request):
+    if request.method == "POST":
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = get_user_model().objects.get(email=email)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
+                reset_url = request.build_absolute_uri(
+                    reverse('reset_password', kwargs={'uidb64': uid, 'token': token})
+                )
+
+                # Enviar email usando tu sistema de bienvenida
+                send_mail_django(
+                    to_email=user.email,
+                    subject="Recupera tu contraseña - GuideHub",
+                    template_name="email",
+                    data={
+                        "usuario": user.username,
+                        "reset_url": reset_url
+                    }
+                )
+
+                messages.success(request, "Si el correo está registrado, recibirás un enlace para restablecer la contraseña.")
+                return redirect('login')
+
+            except get_user_model().DoesNotExist:
+                # No revelamos si existe o no
+                messages.success(request, "Si el correo está registrado, recibirás un enlace para restablecer la contraseña.")
+                return redirect('login')
+    else:
+        form = PasswordResetRequestForm()
+
+    return render(request, 'request.html', {'form': form})
+
+
+def reset_password(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+        user = None
+
+    if user and default_token_generator.check_token(user, token):
+        if request.method == "POST":
+            password1 = request.POST.get('password1')
+            password2 = request.POST.get('password2')
+
+            if password1 and password1 == password2:
+                user.set_password(password1)
+                user.save()
+                messages.success(request, "Tu contraseña ha sido restablecida correctamente.")
+                return redirect('login')
+            else:
+                messages.error(request, "Las contraseñas no coinciden.")
+        
+        return render(request, 'form.html')
+    else:
+        return render(request, 'fallida.html')
