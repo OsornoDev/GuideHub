@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'guidehub.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgres',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DB_NAME'),         
         'USER': config('DB_USER'),       
         'PASSWORD': config('DB_PASSWORD'),     
